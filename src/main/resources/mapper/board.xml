@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pet.model.BoardDAO">
+
+	<select id="idchk" parameterType="String" resultType="Integer">
+		SELECT
+		COUNT(*) FROM member WHERE id = #{id}
+	</select>
+
+	<select id="nickchk" parameterType="String" resultType="Integer">
+		SELECT
+		COUNT(*) FROM member WHERE nickname = #{nick}
+	</select>
+
+<!-- 	<select id="doglist" parameterType="String"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cate=#{dog} order by no desc
+	</select>
+	<select id="catlist" parameterType="String"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cate=#{cat} order by no desc
+	</select>
+	<select id="list_cnt" parameterType="String"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cate=#{dog} order by hit desc
+	</select>
+	<select id="list_rec" parameterType="String"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cate=#{dog} order by up desc
+	</select> -->
+
+	<insert id="adduser" parameterType="com.pet.model.memberDTO">
+		insert into member
+		values(#{id},#{pwd},#{name},#{nickname},#{gender},#{birth},#{phone},default,default,#{addr})
+	</insert>
+
+	<select id="login" parameterType="com.pet.model.memberDTO"
+		resultType="int">
+		select count(*) from member where id=#{id}and pwd=#{pwd}
+	</select>
+
+	<select id="getUserInfo" parameterType="String"
+		resultType="com.pet.model.memberDTO">
+		select * from member where id=#{id}
+	</select>
+	<select id="catlist2" resultType="com.pet.model.BoardDTO">
+		select * from board where
+		cate='cat' order by no desc
+	</select>
+
+	<select id="searchCont" parameterType="string"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cont like '%'||#{name}||'%' order
+		by no desc
+	</select>
+
+	<select id="searchTitle" parameterType="string"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where title like '%'||#{name}||'%'
+		order by no desc
+	</select>
+
+	<select id="searchContTitle" parameterType="string"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cont like '%'||#{name}||'%' and
+		title like #{name}
+		order by no desc
+	</select>
+
+	<select id="searchWriter" parameterType="string"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where writer like '%'||#{name}||'%'
+		order by no desc
+	</select>
+
+	<update id="userupadte" parameterType="com.pet.model.memberDTO">
+		update member set pwd =
+		#{pwd},nickname=#{nickname},birth=#{birth},phone=#{phone},addr=#{addr}
+		where id = #{id}
+	</update>
+
+	<delete id="userdelete" parameterType="string">
+		delete from member where
+		id=#{id}
+	</delete>
+
+	<insert id="qnawrite" parameterType="com.pet.model.SangdamDTO">
+		insert into sangdam
+		values(#{inquiry}, #{email})
+	</insert>
+
+	<insert id="dogadd" parameterType="com.pet.model.BoardDTO">
+		insert into board
+		values(board_seq.nextval, #{title}, #{cont}, #{writer},
+		default,
+		sysdate,default,'dog',#{upload})
+	</insert>
+	<insert id="catadd" parameterType="com.pet.model.BoardDTO">
+		insert into board
+		values(board_seq.nextval, #{title}, #{cont}, #{writer},
+		default,
+		sysdate,default,'cat',#{upload})
+	</insert>
+	<insert id="freeadd" parameterType="com.pet.model.BoardDTO">
+		insert into board
+		values(board_seq.nextval, #{title}, #{cont}, #{writer},
+		default,
+		sysdate,default,'free',#{upload})
+	</insert>
+	<insert id="infoadd" parameterType="com.pet.model.BoardDTO">
+	insert into board
+		values(board_seq.nextval, #{title}, #{cont}, #{writer},
+		default,
+		sysdate,default,#{cate},#{upload})
+	</insert>
+
+	<select id="dog_list" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		<!-- select * from board where "cate"='dog' order by "no" desc -->
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cate='dog')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="cat_list" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		<!-- select * from board where "cate"='dog' order by "no" desc -->
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cate='cat')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="free_list" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		<!-- select * from board where "cate"='dog' order by "no" desc -->
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cate='free')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="dogInfo_getList"  resultType="com.pet.model.BoardDTO">
+	select * from board where cate='dogInfo'
+	</select>
+	<select id="catInfo_getList"  resultType="com.pet.model.BoardDTO">
+	select * from board where cate='catInfo'
+	</select>
+
+
+	<select id="contview" parameterType="int"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where no = #{no}
+	</select>
+
+	<update id="count" parameterType="int">
+		update board set hit = hit+1
+		where no = #{no}
+	</update>
+
+	<update id="like" parameterType="int">
+		update board set up = up+1 where
+		no = #{no}
+	</update>
+	<update id="unlike" parameterType="int">
+		update board set up = up-1
+		where no = #{no}
+	</update>
+	<update id="commant_like" parameterType="int">
+		update commant set up =
+		up+1 where no=#{no}
+	</update>
+	<update id="commant_unlike" parameterType="int">
+		update commant set up
+		= up-1 where no=#{no}
+	</update>
+
+	<select id="dmax" parameterType="com.pet.model.BoardDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from (select * from board order by up desc )WHERE <![CDATA[  rownum <= 3 ]]>
+		and cate='dog'
+	</select>
+	<select id="cmax" parameterType="com.pet.model.BoardDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from (select * from board order by up desc )WHERE <![CDATA[  rownum <= 3 ]]>
+		and cate='cat'
+	</select>
+	<select id="fmax" parameterType="com.pet.model.BoardDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from (select * from board order by up desc )WHERE <![CDATA[  rownum <= 3 ]]>
+		and cate='free'
+	</select>
+
+	<select id="dcount" resultType="int">
+		select count(*) from board where
+		cate='dog'
+	</select>
+	<select id="ccount" resultType="int">
+		select count(*) from board where
+		cate='cat'
+	</select>
+	<select id="fcount" resultType="int">
+		select count(*) from board where
+		cate='free'
+	</select>
+	<select id="dogInfo_Count" resultType="int">
+		select count(*) from board where
+		cate='dogInfo'
+	</select>
+	<select id="catInfo_Count" resultType="int">
+		select count(*) from board where
+		cate='catInfo'
+	</select>
+
+	<!-- 댓글작성 -->
+	<insert id="addCommant" parameterType="com.pet.model.CommantDTO">
+		insert into commant
+		values(commant_seq.nextval, #{bno}, #{writer}, #{cont},
+		default,
+		sysdate,commant_seq.nextval,default,default)
+	</insert>
+
+	<!-- 대댓글작성 -->
+	<insert id="addReply" parameterType="com.pet.model.CommantDTO">
+		insert into commant
+		values(commant_seq.nextval, #{bno}, #{writer}, #{cont},
+		default,
+		sysdate,#{grp},#{step},#{indent}+1)
+	</insert>
+
+	<!-- (view)댓글리스트호출 -->
+	<select id="commantList"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.CommantDTO">
+		<!-- select * from commant where bno=#{no} order by grp ,step -->
+		select * from(select p.*,row_number() over(order by grp ,step) rnum
+		from commant p where step=0 and bno=#{ckNo})
+		where  <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+
+	<!-- (view)댓글리스트호출 -->
+	<select id="commantList123"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.CommantDTO">
+		<!-- select * from commant where bno=#{no} order by grp ,step -->
+		select * from commant where bno=#{ckNo} and <![CDATA[  grp >= #{startNo}]]>
+		and <![CDATA[  grp <= #{endNo}]]>
+		order by grp ,step
+	</select>
+
+	<!-- (view)댓글리스트호출 <select id="commantList" parameterType="int" resultType="com.pet.model.CommantDTO"> 
+		select * from commant where bno=#{no} order by grp ,step </select> -->
+
+	<!-- (con)댓글리스트호출 -->
+	<select id="commantList2"
+		parameterType="com.pet.model.CommantDTO"
+		resultType="com.pet.model.CommantDTO">
+		select * from commant where grp=#{grp} and <![CDATA[  step > #{step} ]]>
+		order by step
+	</select>
+
+
+	<!-- 댓글Step수정 -->
+	<update id="replyUpdateStep"
+		parameterType="com.pet.model.CommantDTO">
+		update commant set step=step+1 where grp=#{grp} and <![CDATA[step >= #{step}]]>
+	</update>
+
+	<!-- step맥스값도출 -->
+	<select id="maxStep" parameterType="com.pet.model.CommantDTO"
+		resultType="int">
+		select max(step) from commant where grp=#{grp}
+	</select>
+	<!-- 더보기 표시 -->
+	<select id="watchOn" parameterType="int" resultType="int">
+		select
+		count(*) from commant where grp=#{grp}
+	</select>
+	<update id="updateBoard" parameterType="com.pet.model.BoardDTO">
+		update board set
+		title=#{title},cont=#{cont},upload=#{upload} where no=#{no}
+	</update>
+	<update id="photoUpdate" parameterType="com.pet.model.BoardDTO">
+		update board set upload =
+		replace(upload,#{upload},'')
+	</update>
+
+	<delete id="deleteBoard" parameterType="com.pet.model.BoardDTO">
+		delete from board where
+		no=#{no}
+	</delete>
+	<delete id="deleteCommantAll"
+		parameterType="com.pet.model.BoardDTO">
+		delete from commant where bno=#{no}
+	</delete>
+	<update id="deleteCommantOne" parameterType="int">
+		update commant set
+		writer='운영자',cont='삭제된 댓글입니다.',up=0 where no=#{no}
+	</update>
+	<update id="updateCommant"
+		parameterType="com.pet.model.CommantDTO">
+		update commant set cont=#{cont} where no=#{no}
+	</update>
+	<insert id="upchk" parameterType="com.pet.model.UpDTO">
+		insert into up
+		values(#{no},#{id},#{cate})
+	</insert>
+	<delete id="downchk" parameterType="com.pet.model.UpDTO">
+		delete from up where no=#{no}
+		and id=#{id} and cate=#{cate}
+	</delete>
+	<select id="chkon" parameterType="com.pet.model.UpDTO"
+		resultType="int">
+		select count(*) from up where no=#{no} and id=#{id} and
+		cate=#{cate}
+	</select>
+
+	<delete id="deleteBoardUp" parameterType="int">
+		delete from up where
+		no=#{no}
+	</delete>
+
+	<select id="commant_count" parameterType="int" resultType="int">
+		select count(*) from commant where bno=#{no} and step=0
+	</select>
+	<select id="dogTitleCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} and cate='dog'
+	</select>
+	<select id="dogContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where cont like #{find_name} and cate='dog'
+	</select>
+	<select id="dogTitle_ContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} or cont like
+		#{find_name} and cate='dog'
+	</select>
+	<select id="dogWriterCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where writer like #{find_name} and cate='dog'
+	</select>
+	<select id="dogTitle" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} and cate='dog')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="dogCont" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cont like #{find_name} and cate='dog')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="dogTitle_Cont"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} or cont like #{find_name} and
+		cate='dog')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="dogWriter" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where writer like #{find_name} and cate='dog')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="catTitleCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} and cate='cat'
+	</select>
+	<select id="catContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where cont like #{find_name} and cate='cat'
+	</select>
+	<select id="catTitle_ContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} or cont like
+		#{find_name} and cate='cat'
+	</select>
+	<select id="catWriterCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where writer like #{find_name} and cate='cat'
+	</select>
+	<select id="catTitle" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} and cate='cat')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="catCont" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cont like #{find_name} and cate='cat')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="catTitle_Cont"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} or cont like #{find_name} and
+		cate='cat')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="catWriter" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where writer like #{find_name} and cate='cat')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="freeTitleCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} and cate='free'
+	</select>
+	<select id="freeContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where cont like #{find_name} and cate='free'
+	</select>
+	<select id="freeTitle_ContCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where title like #{find_name} or cont like
+		#{find_name} and cate='free'
+	</select>
+	<select id="freeWriterCount" parameterType="String"
+		resultType="int">
+		select count(*) from board where writer like #{find_name} and cate='free'
+	</select>
+	<select id="freeTitle" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} and cate='free')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="freeCont" parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where cont like #{find_name} and cate='free')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="freeTitle_Cont"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where title like #{find_name} or cont like #{find_name} and
+		cate='free')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+	<select id="freeWriter"
+		parameterType="com.pet.model.StartendDTO"
+		resultType="com.pet.model.BoardDTO">
+		select * from(select p.*,row_number() over(order by no desc) rnum from
+		board p where writer like #{find_name} and cate='free')
+		where <![CDATA[  rnum >= #{startNo}]]>
+		and <![CDATA[  rnum <= #{endNo}]]>
+	</select>
+
+	<select id="placeSearch" parameterType="String"
+		resultType="com.pet.model.PlaceDTO">
+		select * from placeinfo where cate=#{place} order by no desc
+	</select>
+	<insert id="addPlace" parameterType="com.pet.model.PlaceDTO">
+		insert into placeinfo
+		values(board_seq.nextval,#{title},#{addr},#{cate},#{location},#{tel},#{cont},#{photo})
+	</insert>
+	<select id="placeinfo" parameterType="int"
+		resultType="com.pet.model.PlaceDTO">
+		select * from placeinfo where no=#{no}
+	</select>
+	<insert id="additem" parameterType="com.pet.model.ProductDTO">
+		insert into product
+		values(PRODUCT_SEQ.nextval,#{name},#{price},#{sup},#{cate},0,#{image},#{num},sysdate)
+	</insert>
+	<select id="allitem" resultType="com.pet.model.ProductDTO">
+		select * from product
+	</select>
+	<select id="selectitempage" parameterType="int"
+		resultType="com.pet.model.ProductDTO">
+		select * from product where no=#{no} or
+	</select>
+	<select id="sangdam" parameterType="String"
+		resultType="com.pet.model.SangdamDTO">
+		select * from sangdam
+	</select>
+
+	<delete id="deleteSangdam" parameterType="String">
+		delete from sangdam
+		where email=#{tomail}
+	</delete>
+	<select id="konggeelist" parameterType="String"
+		resultType="com.pet.model.BoardDTO">
+		select * from board where cate='kong' order by no desc
+	</select>
+
+	<insert id="insertKonggee"
+		parameterType="com.pet.model.BoardDTO">
+		insert into board values(board_seq.nextval, #{title}, #{cont}, #{writer},
+		default, sysdate,default,'kong',#{upload})
+	</insert>
+	<update id="bwu" parameterType="hashmap">
+		update board set writer=#{changeNickName} where writer=#{backNickName}
+	</update>
+	<update id="cwu" parameterType="hashmap">
+		update commant set writer=#{changeNickName} where writer=#{backNickName}
+	</update>
+	   <select id="selectitemrange" parameterType="int"
+      resultType="com.pet.model.ProductDTO">
+      select * from product where cate BETWEEN #{no}*10-10 and #{no}*10+9
+      order by no desc
+      <!--0 ~19 1s0~29 -->
+   </select>
+   <select id="publiccateitem" parameterType="int"
+      resultType="com.pet.model.ProductDTO">
+      select * from product where cate=#{no} or cate=#{no}+10 or
+      cate=#{no}+20
+      order by no desc
+   </select>
+   <select id="cateitem" parameterType="int"
+      resultType="com.pet.model.ProductDTO">
+      select * from product where cate=#{no} or cate = #{no}+10
+      order by no desc
+   </select>
+   <select id="itemcont" parameterType="int"
+      resultType="com.pet.model.ProductDTO">
+      select * from product where no=#{no}
+   </select>
+   <select id="isBasket" parameterType="com.pet.model.ZzimDTO"
+      resultType="int">
+      select count(*) from basket where pno=#{pno} and id=#{id}
+   </select>
+   <insert id="addbasket" parameterType="com.pet.model.BasketDTO">
+      insert into basket
+      values(basket_seq.nextval,#{id},#{pno},#{num})
+   </insert>
+   <update id="addupdatebasket"
+      parameterType="com.pet.model.BasketDTO">
+      update basket set num=num+#{num} where pno=#{pno}
+   </update>
+   <select id="isZzim" parameterType="com.pet.model.ZzimDTO"
+      resultType="int">
+      select count(*) from zzim where pno=#{pno} and id=#{id}
+   </select>
+   <insert id="addzzim" parameterType="com.pet.model.ZzimDTO">
+      insert into zzim
+      values(zzim_seq.nextval,#{id},#{pno},sysdate)
+   </insert>
+   <select id="getmyzzim" parameterType="String" resultType="int">
+      select
+      pno from zzim where id=#{id} order by regdate desc
+   </select>
+   <delete id="deleteZzim" parameterType="com.pet.model.ZzimDTO">
+      delete zzim where id=#{id} and pno =#{pno}
+   </delete>
+   <select id="getmybasket" parameterType="String"
+      resultType="com.pet.model.BasketDTO">
+      select * from basket where id=#{id} order by no desc
+   </select>
+   <delete id="deletebaskteritem"
+      parameterType="com.pet.model.BasketDTO">
+      delete basket where id=#{id} and pno=#{pno}
+   </delete>
+   <update id="chnagebasketNum"
+      parameterType="com.pet.model.BasketDTO">
+      update basket set num=#{num} where id=#{id} and pno=#{pno}
+   </update>
+   <insert id="parceloutwrite" parameterType="com.pet.model.BoardDTO">
+   	insert into board values(board_seq.nextval,#{title},#{cont},#{writer},0,sysdate,0,#{cate},#{upload})
+   </insert>
+   <select id="getParList" resultType="com.pet.model.BoardDTO">
+   select * from board where cate='catBy' or cate='dogBy' order by regdate desc</select>
+   <select id="getCatParList" resultType="com.pet.model.BoardDTO">
+   select * from board where cate='catBy' order by regdate desc</select>
+   <select id="getDogParList" resultType="com.pet.model.BoardDTO">
+   select * from board where cate='dogBy' order by regdate desc</select>
+   <select id="searchBoard" parameterType="String" resultType="com.pet.model.BoardDTO">
+   select title,cont,no,writer,regdate,upload from board where title like #{asd} or cont like #{asd} or writer like #{asd}
+   </select>
+   <select id="searchPlace" parameterType="String" resultType="com.pet.model.PlaceDTO">
+   select title,cont,no,photo from placeinfo where title like #{asd} or cont like #{asd} or addr like #{asd} or location like #{asd} 
+   </select>
+   <select id="searchProduct" parameterType="String" resultType="com.pet.model.ProductDTO">
+   select name,price,no,sup,image from product where name like #{asd} or sup like #{asd}
+   </select>
+
+</mapper>

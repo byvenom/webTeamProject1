@@ -1,0 +1,97 @@
+create table up(
+   no number(8),
+   id varchar2(30),
+   cate number(2)
+);
+create table board(
+no number(8) primary key,
+title varchar2(200) not null,
+cont varchar2(1000) not null,
+writer varchar2(20) not null,
+hit number(7) default 0,
+regdate date,
+up number(4) default 0,
+cate varchar2(8),
+upload varchar2(1000)
+);
+
+create sequence board_seq
+START WITH 1 
+INCREMENT BY 1
+NOCACHE;
+
+create table member(
+id varchar2(20) primary key,
+pwd varchar(20) not null,
+name varchar2(40) not null,
+nickname varchar2(20) unique,
+gender varchar(2) not null,
+birth number(8) not null,
+phone varchar2(13) not null,
+point number(8),
+pic varchar2(25),
+addr varchar2(60)
+);
+
+create table commant(
+no number(8) primary key,
+bno number(8),
+writer varchar2(20) not null,
+cont varchar2(1000),
+up number(4) default 0,
+regdate date,
+grp number(4),
+step number(4) default 0,
+indent number(4) default 0
+);
+
+create sequence commant_seq
+START WITH 1 
+INCREMENT BY 1
+NOCACHE;
+
+create table product(
+no number(4) primary key,
+name varchar2(50),
+price number(8),
+sup varchar2(20),
+cate number(2),
+pop number(4),
+image varchar2(200),
+num number(4),
+regdate date
+);
+
+create sequence product_seq
+START WITH 1 
+INCREMENT BY 1
+NOCACHE;
+
+create table zzim(
+no number(4) primary key,
+id varchar2(20),
+pno number(4),
+regdate date
+);
+
+create sequence zzim_seq
+START WITH 1 
+INCREMENT BY 1
+NOCACHE;
+
+create table basket(
+no number(4) primary key,
+id varchar2(20),
+pno number(4),
+num number(4)
+);
+
+create sequence basket_seq
+START WITH 1 
+INCREMENT BY 1
+NOCACHE;
+
+create table sangdam (
+email varchar2(30),
+inquiry varchar2(2000)
+);
